@@ -1,7 +1,7 @@
 {
   "name": "idk-chat-desktop",
   "private": true,
-  "version": "10.16.0",
+  "version": "10.16.1",
   "scripts": {
     "tauri": "tauri",
     "desktop:dev": "tauri dev",

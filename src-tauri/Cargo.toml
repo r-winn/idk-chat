@@ -1,6 +1,6 @@
 [package]
 name = "idk-chat-desktop"
-version = "10.16.0"
+version = "10.16.1"
 description = "Official IDK Chat desktop application"
 authors = ["IDK Group"]
 edition = "2021"
