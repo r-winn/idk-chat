@@ -1,0 +1,13 @@
+{
+  "name": "idk-chat-desktop",
+  "private": true,
+  "version": "10.16.0",
+  "scripts": {
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
+    "desktop:icon": "tauri icon ../../deployment/vps/app/App/MainAssets/idk-icon-512-v4.png"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.8.5"
+  }
+}

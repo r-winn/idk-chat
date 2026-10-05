@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "IDK Chat",
+  "version": "10.16.0",
+  "identifier": "ir.idkchat.desktop",
+  "build": {
+    "frontendDist": "../web"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "IDK | Chat",
+        "url": "https://app.idkchat.ir/App/Auth/index.php?desktop=1",
+        "width": 1240,
+        "height": 820,
+        "minWidth": 760,
+        "minHeight": 560,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false,
+        "backgroundColor": "#0f0f0f",
+        "userAgent": "IDKChatDesktop/10.16.0"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "targets": ["nsis", "msi", "dmg", "app"],
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico", "icons/icon.icns"],
+    "publisher": "IDK Group",
+    "copyright": "Copyright © 2026 IDK Group",
+    "category": "SocialNetworking",
+    "shortDescription": "Private real-time messaging by IDK Group",
+    "longDescription": "The official desktop application for IDK Chat, including real-time messaging, calls and Nova access.",
+    "windows": {
+      "allowDowngrades": false,
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false,
+        "compression": "lzma",
+        "startMenuFolder": "IDK Chat"
+      },
+      "wix": {
+        "language": "en-US"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": "-",
+      "infoPlist": "Info.plist"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERFOEY3QTQ1RjA1RTA4ODEKUldTQkNGN3dSWHFQM3BkRU0xbHV4M3o2ME4xR0s4cjZidG9CWEw0TndxUlorb1NOa3l2SVJ5RkQK",
+      "endpoints": ["https://github.com/r-winn/idk-chat/releases/latest/download/latest.json"],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}
