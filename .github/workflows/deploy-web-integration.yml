@@ -1,0 +1,49 @@
+name: Deploy IDK Chat web integration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare locked-down SSH identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.VPS_SSH_PRIVATE_KEY }}" > "$HOME/.ssh/idk_deploy"
+          chmod 600 "$HOME/.ssh/idk_deploy"
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> "$HOME/.ssh/known_hosts"
+      - name: Validate and upload the release patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "${{ secrets.DEPLOY_PATCH_B64 }}" | base64 --decode > "$RUNNER_TEMP/idk-patch.tar.gz"
+          test -s "$RUNNER_TEMP/idk-patch.tar.gz"
+          tar -tzf "$RUNNER_TEMP/idk-patch.tar.gz" | while IFS= read -r path; do
+            case "$path" in
+              app/App/Home/home.php|app/App/Home/HomeAssets/Js/home-v902.js|app/App/Auth/index.php|app/App/version.json|apache-vhost.conf) ;;
+              *) echo "Unexpected patch path: $path" >&2; exit 1 ;;
+            esac
+          done
+          scp -i "$HOME/.ssh/idk_deploy" "$RUNNER_TEMP/idk-patch.tar.gz" "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/arvin/apps/idk-patch-current.tar.gz"
+      - name: Apply and verify on the server
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/idk_deploy" "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" <<'REMOTE'
+          set -eu
+          target=/home/arvin/apps/idk
+          patch=/home/arvin/apps/idk-patch-current.tar.gz
+          test -d "$target/app/App/Home"
+          test -s "$target/.env"
+          test -s "$patch"
+          tar -xzf "$patch" -C "$target"
+          cd "$target"
+          docker compose up -d --build web
+          docker compose exec -T web php -l /var/www/html/App/Home/home.php
+          docker compose exec -T web php -l /var/www/html/App/Auth/index.php
+          test "$(docker compose exec -T web php -r 'echo json_decode(file_get_contents("/var/www/html/App/version.json"),true)["app_version"];')" = "10.16.01"
+          rm -f "$patch"
+          REMOTE
