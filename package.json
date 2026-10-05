@@ -3,6 +3,7 @@
   "private": true,
   "version": "10.16.0",
   "scripts": {
+    "tauri": "tauri",
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "desktop:icon": "tauri icon ../../deployment/vps/app/App/MainAssets/idk-icon-512-v4.png"
